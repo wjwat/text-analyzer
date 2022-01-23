@@ -1,3 +1,5 @@
+const OFFENSIVE_WORDS = ['zoinks', 'muppeteer', 'biffaroni', 'loopdaloop']
+
 // Utility Logic
 
 function noWord(word) {
@@ -24,6 +26,21 @@ function puncTrimWord(word) {
   const regex = new RegExp(`^[${c}]|[${c}]$`, 'g')
 
   return word.replace(regex, '');
+}
+
+
+// passage should be a string, and words should be an array
+function replaceWord(passage, words) {
+  let r = passage;
+
+  words.forEach(word => {
+    // Construct a replacement string of the same length as the word to be
+    // replaced. May move this out to make it fun.
+    replacement = ''.padStart(word.length, '*');
+
+    r = r.replaceAll(word, replacement);
+  })
+  return r;
 }
 
 // Return the top three entries from our Map obj which we cannot iterate
