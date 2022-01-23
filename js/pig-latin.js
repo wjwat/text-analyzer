@@ -26,6 +26,13 @@ function puncTrimWord(word) {
 // becomes "ickquay" while "squeal" becomes "quealsay."
 const VOWELS = ['a', 'e', 'i', 'o', 'u']
 
+// Pig latin has more rules than we are given in this exercise, but I'm not
+// currently willing to go down that rabbit hole. According to the wikipedia
+// article there are different ways to convert what you're saying into pig
+// latin (depending).
+//
+// Rules regarding 'y' are from:
+// https://reference.yourdictionary.com/resources/how-to-speak-pig-latin-basic-rules.html
 function pigLatin(passage) {
   let pigified = [];
   let p = splitPassage(passage.toLowerCase());
@@ -33,17 +40,36 @@ function pigLatin(passage) {
   p.forEach(word => {
     word = puncTrimWord(word);
 
-    if (VOWELS.indexOf(word[0]) > -1) {
+    // If a word starts with a VOWEL just push that word + 'way' onto our arr.
+    if (VOWELS.indexOf(word[0]) > -1 && word[0] != 'y') {
       pigified.push(word + 'way');
     } else {
-      pigified.push(word);
+      // We keep track of the index outside of the loop so we can slice the
+      // remainder of the word that we didn't iterate over and concat it with
+      // our accumulated letters & 'ay'.
+      let t = '', i = 0;
+      for (i = 0; i < word.length; i++) {
+        // Do we ever move other letters to the end of the word, or does 'qu'
+        // mean we stop scanning?
+        if (word[i] === 'q' && word[i+1] === 'u') {
+          t += 'qu';
+          i += 2;
+          break;
+        // treat 'y' as a vowel if it's not the first character in a word
+        } else if (i > 0 && word[i] === 'y') {
+          break;
+        // consonant clusters
+        } else if (VOWELS.indexOf(word[i]) < 0) {
+          t += word[i];
+        // We've hit a vowel so we're done
+        } else {
+          break;
+        }
+      }
+      t = word.slice(i) + t + 'ay';
+      pigified.push(t);
     }
   });
 
   return pigified.join(' ');
 }
-
-let t = 'This is my sentence!'
-
-console.log(t);
-console.log(pigLatin(t));
