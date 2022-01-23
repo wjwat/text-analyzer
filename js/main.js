@@ -10,6 +10,51 @@ function noInputtedWord(word, text) {
   return ((text.trim().length === 0) || (word.trim().length === 0));
 }
 
+
+// These two functions are a huge pain in the ass compared to using regex.
+//
+// Returns an array containing the beginning index of all occurrences of
+// sub within passage, which we can use with replaceAllByIndices to keep
+// string case.
+function _getSubStrIndices(passage, sub) {
+  let p = passage.toLowerCase();
+  let s = sub.toLowerCase();
+
+  let position = p.indexOf(s);
+  let indices = [];
+
+  while (position !== -1) {
+    indices.push(position);
+    position = p.indexOf(s, position + 1);
+  }
+
+  return indices;
+}
+
+// Working backwards this inserts substring in place
+// of original case insensitively.
+function _replaceAllInsensitive(passage, orig, sub) {
+  let p = passage;
+  let s = sub;
+  let indices = _getSubStrIndices(passage, orig).reverse();
+
+  indices.forEach(i => {
+    p = p.slice(0, i) + s + p.slice(i+orig.length)
+    console.log(p);
+  })
+
+  return p;
+}
+
+// Same thing as the two above, but much better.
+// Is it faster though?
+// How do we measure speed with JavaScript?
+function replaceAllInsensitive(passage, orig, sub) {
+  let reg = new RegExp(`${orig}`, 'ig');
+
+  return passage.replace(reg, sub);
+}
+
 // TODO: Implement some functionality to include various types of white-
 // space other than just your standard ASCII space. Tabs, newlines, unicode
 // whitespace. I'm sure there are others I'm forgetting.
@@ -28,7 +73,10 @@ function puncTrimWord(word) {
   return word.replace(regex, '');
 }
 
-
+// I'm considering this a utility function because it is generic enough to
+// be cut & paste in any other application in which we might want to use it.
+// On a second look though it's not completely portable, but I'm not sure I
+// want to push that rock up the hill to make it so.
 // passage should be a string, and words should be an array
 function replaceWord(passage, words) {
   let r = passage;
@@ -147,6 +195,16 @@ function boldPassage(word, text) {
     }
   });
   return htmlString + "</p>";
+}
+
+function boldSubString(passage, sub) {
+  if (noWord(sub) || noWord(passage)) {
+    return "";
+  }
+
+  let newSub = '<b>' + sub + '</b>';
+
+  return replaceAllInsensitive(passage, sub, newSub);
 }
 
 // $(document).ready(function(){
