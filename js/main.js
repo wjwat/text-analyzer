@@ -19,6 +19,14 @@ function puncTrimWord(word) {
   return word.replace(regex, '');
 }
 
+// Return the top three entries from our Map obj which we cannot iterate
+// over in any kind of (imo) reasonable way so we spread it and return a
+// slice of the first three items.
+// [[firstStr, firstStrCount], [secondStr, secondStrCount], ...]
+function topThree(mapObj) {
+  return [...mapObj.entries()].slice(0, 3);
+}
+
 // Business Logic
 
 function wordCounter(text) {
@@ -64,7 +72,7 @@ function uniqWordsCount(passage) {
   // ex: "This has a period."
   //          split => ['This', 'has', 'a', 'period.']
   //      preferred => ['This', 'has', 'a', 'period']
-  const words = passage.split(' ');
+  const words = passage.toLowerCase().split(' ').map(puncTrimWord);
   let counts = {};
   let sortedUniq = new Map();
 
