@@ -8,6 +8,13 @@ function noInputtedWord(word, text) {
   return ((text.trim().length === 0) || (word.trim().length === 0));
 }
 
+// TODO: Implement some functionality to include various types of white-
+// space other than just your standard ASCII space. Tabs, newlines, unicode
+// whitespace. I'm sure there are others I'm forgetting.
+function splitPassage(passage) {
+  return passage.split(' ');
+}
+
 // A word, as we are defining it, is a string that has been trimmed of
 // whitespace, and does not contain whitespace. To extend this function
 // we only need edit `c` to include more punctuation characters we'd like
@@ -35,7 +42,7 @@ function wordCounter(text) {
   }
 
   let wordCount = 0;
-  const wordArray = text.split(" ");
+  const wordArray = splitPassage(text);
   wordArray.forEach(function(element) {
     if (!Number(element)) {
       wordCount++;
@@ -49,7 +56,7 @@ function numberOfOccurrencesInText(word, text) {
     return 0;
   }
 
-  const wordArray = text.split(" ");
+  const wordArray = splitPassage(text);
   let wordCount = 0;
   wordArray.forEach(function(element) {
     if (element.toLowerCase().includes(word.toLowerCase())) {
@@ -72,7 +79,7 @@ function uniqWordsCount(passage) {
   // ex: "This has a period."
   //          split => ['This', 'has', 'a', 'period.']
   //      preferred => ['This', 'has', 'a', 'period']
-  const words = passage.toLowerCase().split(' ').map(puncTrimWord);
+  const words = splitPassage(passage.toLowerCase()).map(puncTrimWord);
   let counts = {};
   let sortedUniq = new Map();
 
@@ -111,7 +118,7 @@ function boldPassage(word, text) {
   }
 
   let htmlString = "<p>";
-  let textArray = text.split(" ");
+  let textArray = splitPassage(textArray);
   textArray.forEach(function(element, index) {
     if (element.toLowerCase().includes(word.toLowerCase())) {
       htmlString = htmlString.concat("<b>" + element + "</b>");
