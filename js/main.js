@@ -8,6 +8,17 @@ function noInputtedWord(word, text) {
   return ((text.trim().length === 0) || (word.trim().length === 0));
 }
 
+// A word, as we are defining it, is a string that has been trimmed of
+// whitespace, and does not contain whitespace. To extend this function
+// we only need edit `c` to include more punctuation characters we'd like
+// to trim.
+function puncTrimWord(word) {
+  const c = '.,\/!?:;&'
+  const regex = new RegExp(`^[${c}]|[${c}]$`, 'g')
+
+  return word.replace(regex, '');
+}
+
 // Business Logic
 
 function wordCounter(text) {
@@ -38,6 +49,50 @@ function numberOfOccurrencesInText(word, text) {
     }
   });
   return wordCount;
+}
+
+// `passage` should be a string, and returns a Map object.
+//
+// What happens if a word is separated by some other whitespace that isn't
+// a space?
+//
+// Do objects preserve insertion order? Yes, but only for strings. For int
+// keys they are stored in ascending order.
+function uniqWordsCount(passage) {
+  // This by itself is weak because if a character has punctuation either
+  // before or after it then we determine it's a separate word.
+  // ex: "This has a period."
+  //          split => ['This', 'has', 'a', 'period.']
+  //      preferred => ['This', 'has', 'a', 'period']
+  const words = passage.split(' ');
+  let counts = {};
+  let sortedUniq = new Map();
+
+  for (let ele of words) {
+    // If a 'word' is an empty string, or if it is a number
+    // then skip it.
+    if (noWord(ele) || Number(ele)) {
+      continue;
+    }
+    // if counts[ele] exists then set value of counts[ele]
+    // to pre-existing value + 1, else set it to 1.
+    counts[ele] = counts[ele] ? counts[ele] + 1 : 1;
+  }
+
+  // Turn our object into an array whose elements are an array of
+  // length === 2.
+  Object.entries(counts)
+        // sort that array in descending order by the value of
+        // the second element (the count of the word)
+        .sort(([,a], [,b]) => b - a)
+        // Take that sorted array and turn it into a Map object
+        // to preserve insertion order so we can use it for all
+        // kinds of keys
+        .forEach(([k, v]) => {
+          sortedUniq.set(k, v);
+        });
+
+  return sortedUniq;
 }
 
 // UI Logic
@@ -74,74 +129,3 @@ function boldPassage(word, text) {
 //     $("#bolded-passage").html(boldPassage(word, passage));
 //   });
 // });
-
-const passage = "fart This is a test passage. This is another fart fart fart test test test test test passage. This is a fart."
-//const passage = '2 1 2 491 1 1 abc abc fart abc 101 83 1 10 38 72911 10  2 2 2 2 2 2 2 2 2 2 2 2'
-const word = "fart"
-const wordCount = wordCounter(passage);
-const occurrencesOfWord = numberOfOccurrencesInText(word, passage);
-
-// let newCount = passage.split(' ').filter(e => {
-//   return !Number(e);
-// })
-
-// What happens if a word is separated by some other whitespace that isn't
-// a space?
-//
-// Do objects preserve insertion order? Yes, but only for strings. For int
-// keys they are stored in ascending order.
-function uniqWordsCount(passage) {
-  const words = passage.split(' ');
-  let counts = {};
-  let sortedUniq = new Map();
-
-  for (let ele of words) {
-    // If a 'word' is an empty string, or if it is a number
-    // then skip it.
-    if (noWord(ele) || Number(ele)) {
-      continue;
-    }
-    // if counts[ele] exists then set value of counts[ele]
-    // to pre-existing value + 1, else set it to 1.
-    counts[ele] = counts[ele] ? counts[ele] + 1 : 1;
-  }
-
-  // Turn our object into an array whose elements are an array of
-  // length === 2.
-  Object.entries(counts)
-        // sort that array in descending order by the value of
-        // the second element (the count of the word)
-        .sort(([,a], [,b]) => b - a)
-        // Take that sorted array and turn it into a Map object
-        // to preserve insertion order so we can use it for all
-        // kinds of keys
-        .forEach(([k, v]) => {
-          sortedUniq.set(k, v);
-        });
-
-  return sortedUniq;
-}
-
-// Returns a Map object
-let x = uniqWordsCount(passage);
-
-// How do we display the top three unique words?
-
-// This feels stupid
-let i = 0;
-for (const k of x.keys()) {
-  if (i === 3) {
-    break;
-  }
-  console.log(k);
-  i++;
-}
-
-const k = [...x.keys()];
-const v = [...x.values()];
-
-console.log(k.slice(0, 3), v.slice(0, 3));
-
-const ent = [...x.entries()]
-
-console.log(ent.slice(0, 3));
