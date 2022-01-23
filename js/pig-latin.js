@@ -73,3 +73,11 @@ function pigLatin(passage) {
 
   return pigified.join(' ');
 }
+
+$(document).ready(e => {
+  $('#pigify').on('click', c => {
+    pigified = pigLatin($('#sentence').val());
+
+    $('#display').html('<h2>'+pigified+'</h2>');
+  })
+})
