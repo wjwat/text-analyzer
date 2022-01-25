@@ -1,16 +1,4 @@
-const NUMERALS = {'M': 1000,
-								 'CM': 900,
-							    'D': 500,
-								 'CD': 400,
-								  'C': 100,
-								 'XC': 90,
-							   	'L': 50,
-								 'XL': 40,
-									'X': 10,
-								 'IX': 9,
-									'V': 5,
-								 'IV': 4,
-									'I': 1}
+const NUMERALS = {'M': 1000, 'CM': 900, 'D': 500, 'CD': 400, 'C': 100, 'XC': 90, 'L': 50, 'XL': 40, 'X': 10, 'IX': 9, 'V': 5, 'IV': 4, 'I': 1}
 
 function convertToRoman(num) {
 	// Without this we just push 'M' onto the return string until we finally drop
@@ -33,5 +21,5 @@ function convertToRoman(num) {
 let test = [10, 99, 3999, 4000, 2021, 400, 600];
 
 test.forEach(t => {
-	console.log(t, intToRomanNumeral(t));
+	console.log(t, convertToRoman(t));
 })
